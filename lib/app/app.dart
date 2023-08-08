@@ -24,9 +24,9 @@ class App extends StatelessWidget {
     return MultiProvider(providers: [
       ChangeNotifierProvider(
         create: (context) => UserLocationProvider(),
-        child: MyHomPage(),
+        child: const MyHomPage(),
       )
-    ], child: MyHomPage());
+    ], child: const MyHomPage());
   }
 }
 
