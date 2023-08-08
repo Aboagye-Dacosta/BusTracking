@@ -37,26 +37,31 @@ class BusItem extends StatelessWidget {
                 color: AppColors.gray,
               ),
             ),
-            if (busAndDriverModel.bus.startPoint.isNotEmpty)
+            if (busAndDriverModel.bus.driverState != "Offline")
               Column(
                 children: [
-                  const SizedBox(
-                    height: AppSizing.h_8,
-                  ),
-                  _locationTile(
-                      type: "Start Point",
-                      value: busAndDriverModel.bus.startPoint),
-                ],
-              ),
-            if (busAndDriverModel.bus.currentDestination.isNotEmpty)
-              Column(
-                children: [
-                  _locationTile(
-                      type: "Destination",
-                      value: busAndDriverModel.bus.currentDestination),
-                  const SizedBox(
-                    height: AppSizing.h_8,
-                  ),
+                  if (busAndDriverModel.bus.startPoint.isNotEmpty)
+                    Column(
+                      children: [
+                        const SizedBox(
+                          height: AppSizing.h_8,
+                        ),
+                        _locationTile(
+                            type: "Start Point",
+                            value: busAndDriverModel.bus.startPoint),
+                      ],
+                    ),
+                  if (busAndDriverModel.bus.currentDestination.isNotEmpty)
+                    Column(
+                      children: [
+                        _locationTile(
+                            type: "Destination",
+                            value: busAndDriverModel.bus.currentDestination),
+                        const SizedBox(
+                          height: AppSizing.h_8,
+                        ),
+                      ],
+                    ),
                 ],
               ),
             Row(
@@ -83,25 +88,27 @@ class BusItem extends StatelessWidget {
                 const SizedBox(
                   width: AppSizing.h_24,
                 ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: AppSizing.h_16,
-                        width: AppSizing.h_16,
-                        margin: EdgeInsets.only(right: AppSizing.s_4),
-                        decoration: BoxDecoration(
-                            color:
-                                busAndDriverModel.bus.busState == BusState.full
-                                    ? AppColors.secondary
-                                    : AppColors.active,
-                            borderRadius: BorderRadius.circular(AppSizing.h_8)),
-                      ),
-                      Text(busAndDriverModel.bus.busState == BusState.full
-                          ? "Full"
-                          : "Not Full")
-                    ]),
+                if (busAndDriverModel.bus.driverState != "Offline")
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: AppSizing.h_16,
+                          width: AppSizing.h_16,
+                          margin: EdgeInsets.only(right: AppSizing.s_4),
+                          decoration: BoxDecoration(
+                              color: busAndDriverModel.bus.busState ==
+                                      BusState.full
+                                  ? AppColors.secondary
+                                  : AppColors.active,
+                              borderRadius:
+                                  BorderRadius.circular(AppSizing.h_8)),
+                        ),
+                        Text(busAndDriverModel.bus.busState == BusState.full
+                            ? "Full"
+                            : "Not Full")
+                      ]),
               ],
             )
           ]),

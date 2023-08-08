@@ -27,6 +27,8 @@ import '../provider/location_provider.dart';
 String? _radioState = "initial";
 String? _startPoint = "initial";
 String? _destination = "initial";
+String currentDestination = "";
+String currentStartPoint = "";
 bool active = false;
 
 class DriverScreen extends StatefulWidget {
@@ -44,8 +46,8 @@ class _DriverScreenState extends State<DriverScreen> {
   final bussRepo = Get.put(BusRepository());
   bool isEditable = false;
   final loc.Location location = loc.Location();
-  late bool isBusAdded = false;
-  late bool isLoading = false;
+  bool isBusAdded = false;
+  bool isLoading = false;
 
   late StreamSubscription<loc.LocationData>? _locationSubscription = null;
 
@@ -85,8 +87,10 @@ class _DriverScreenState extends State<DriverScreen> {
         if (!active) {
           final currentLocation = await location.getLocation();
 
+          print("------------------------- value of active ❤️❤️❤️👌😊 $active");
+
           final busModel = BusModel(
-              driverState: active ? "Online" : "Offline",
+              driverState: "Online",
               busState:
                   _radioState == "full" ? BusState.full : BusState.notFull,
               currentDestination: _destination!,
@@ -112,6 +116,7 @@ class _DriverScreenState extends State<DriverScreen> {
             );
           });
         } else {
+          await bussRepo.updateBusDataDriverState("Offline");
           _locationSubscription!.cancel();
         }
         setState(() {
@@ -135,12 +140,14 @@ class _DriverScreenState extends State<DriverScreen> {
     void onTapStartPoint(String? value) {
       setState(() {
         _startPoint = value;
+        currentStartPoint = value!;
       });
     }
 
     void onTapDestination(String? value) {
       setState(() {
         _destination = value;
+        currentDestination = value!;
       });
     }
 
@@ -148,23 +155,21 @@ class _DriverScreenState extends State<DriverScreen> {
       SharedPreferences pref = await SharedPreferences.getInstance();
       pref.remove("email");
       pref.remove("userType");
+
+      if (_locationSubscription != null) {
+        _locationSubscription!.cancel();
+      }
+
       setState(() {
         active = false;
-        if (_locationSubscription != null) {
-          _locationSubscription!.cancel();
-        }
       });
-      if (_locationSubscription != null) {
-        Future.delayed(Duration(seconds: 3), () {
-          FirebaseAuth.instance.signOut().then((value) {
-            Navigator.of(context).pushReplacementNamed(SignInScreen.routeName);
-          });
-        });
-      } else {
+      await bussRepo.updateBusDataDriverState("Offline");
+
+      Future.delayed(Duration(seconds: 3), () {
         FirebaseAuth.instance.signOut().then((value) {
           Navigator.of(context).pushReplacementNamed(SignInScreen.routeName);
         });
-      }
+      });
     }
 
     void handleForm(String driverId, bool isBusAdded) {
@@ -180,17 +185,6 @@ class _DriverScreenState extends State<DriverScreen> {
     void handleAddDestinations(String? str) {
       Navigator.of(context).pushNamed(DestinationPage.routName, arguments: str);
     }
-
-    // void (List<dynamic> list, String str) {
-    //   final li = list.map((e) => e.toString()).toList();
-    //   li.remove(str);
-
-    //   bussRepo.updateBusDataField("destinations", li);
-
-    //   setState(() {
-    //     loadFuture = _loadDestinations();
-    //   });
-    // }
 
     return Scaffold(
         body: FutureBuilder<UserModel>(
@@ -420,7 +414,7 @@ class _DriverScreenState extends State<DriverScreen> {
                                   value: "not full",
                                   label: "Bus not full",
                                   groupValue: _radioState,
-                                  onTap: () => onTapBussState("space"),
+                                  onTap: () => onTapBussState("not full"),
                                   onChanged: onTapBussState,
                                 )
                               ],
@@ -437,7 +431,6 @@ class _DriverScreenState extends State<DriverScreen> {
                               factor: 40,
                               type: TYPE.vertical,
                             ),
-
                             _locationBuild(
                                 driverSnapshot,
                                 onTapStartPoint,
@@ -450,13 +443,6 @@ class _DriverScreenState extends State<DriverScreen> {
                               factor: 20,
                               type: TYPE.vertical,
                             ),
-                            // ClipRRect(
-                            //   borderRadius: BorderRadius.circular(AppSizing.h_24),
-                            //   child: ButtonComponent(
-                            //     label: "save",
-                            //     handler: handleSave,
-                            //   ),
-                            // )
                           ]),
                     );
                   })
@@ -547,13 +533,19 @@ class _DriverScreenState extends State<DriverScreen> {
                                                     value: val,
                                                     label: val,
                                                     groupValue: _startPoint,
-                                                    onTap: () =>
-                                                        onTapStartPoint(val),
+                                                    disabled:
+                                                        currentDestination ==
+                                                            val,
+                                                    onTap: () {
+                                                      if (currentDestination !=
+                                                          val)
+                                                        onTapStartPoint(val);
+                                                    },
                                                     onChanged: onTapStartPoint,
                                                   ))
                                               .toList()
                                         ]
-                                      : [],
+                                      : [Container()],
                                 ),
                                 const SpaceComponent(
                                   factor: 40,
@@ -580,8 +572,14 @@ class _DriverScreenState extends State<DriverScreen> {
                                                     value: val,
                                                     label: val,
                                                     groupValue: _destination,
-                                                    onTap: () =>
-                                                        onTapDestination(val),
+                                                    disabled:
+                                                        currentStartPoint ==
+                                                            val,
+                                                    onTap: () {
+                                                      if (currentStartPoint !=
+                                                          val)
+                                                        onTapDestination(val);
+                                                    },
                                                     onChanged: onTapDestination,
                                                   ))
                                               .toList()
@@ -636,17 +634,25 @@ class _DriverScreenState extends State<DriverScreen> {
     String? groupValue,
     void Function()? onTap,
     void Function(String?)? onChanged,
+    bool? disabled = false,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: FittedBox(
         child: Container(
           // width: AppSizing.h_120,
-          padding: const EdgeInsets.symmetric(horizontal: AppSizing.h_8),
+          padding: disabled == false
+              ? const EdgeInsets.symmetric(horizontal: AppSizing.h_8)
+              : const EdgeInsets.symmetric(
+                  horizontal: AppSizing.h_16, vertical: 10),
           margin: const EdgeInsets.all(AppSizing.s_2),
 
           decoration: BoxDecoration(
-              color: groupValue == value ? AppColors.primary : AppColors.light,
+              color: groupValue == value && disabled == false
+                  ? AppColors.primary
+                  : disabled == true
+                      ? AppColors.gray
+                      : AppColors.light,
               border: Border.all(
                   width: 1.0,
                   color: groupValue == value ? AppColors.primary : Colors.grey),
@@ -655,12 +661,13 @@ class _DriverScreenState extends State<DriverScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Radio(
-                value: value,
-                groupValue: groupValue,
-                onChanged: onChanged,
-                toggleable: true,
-              ),
+              if (disabled == false)
+                Radio(
+                  value: value,
+                  groupValue: groupValue,
+                  onChanged: onChanged,
+                  toggleable: true,
+                ),
               Text(
                 label,
                 style: TextStyle(
@@ -677,7 +684,6 @@ class _DriverScreenState extends State<DriverScreen> {
   void _showAlertDialog(
       BuildContext context, String driverId, bool isBusAdded) {
     String input1 = '';
-    String input2 = '';
 
     showDialog(
       context: context,
@@ -693,14 +699,6 @@ class _DriverScreenState extends State<DriverScreen> {
                 },
                 decoration: InputDecoration(labelText: "Bus Plate Number"),
               ),
-              isBusAdded
-                  ? TextField(
-                      onChanged: (value) {
-                        input2 = value;
-                      },
-                      decoration: InputDecoration(labelText: 'Driver Id'),
-                    )
-                  : const SizedBox(),
             ],
           ),
           actions: <Widget>[

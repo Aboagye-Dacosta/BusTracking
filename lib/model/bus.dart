@@ -27,6 +27,7 @@ class BusModel {
   toJson() {
     return {
       "driverId": driverId,
+      "driverState": driverState,
       "busState": busState == BusState.full ? "full" : "not full",
       "currentDestination": currentDestination,
       "startPoint": startPoint,

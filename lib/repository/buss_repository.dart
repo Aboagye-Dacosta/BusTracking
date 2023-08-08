@@ -149,4 +149,13 @@ class BusRepository extends GetxController {
       );
     });
   }
+
+ updateBusDataDriverState( String value) async {
+    final pref = await SharedPreferences.getInstance();
+    final busId = pref.getString("busId");
+    _db
+        .collection(_collection)
+        .doc(busId)
+        .set({"driverState": value}, SetOptions(merge: true));
+  }
 }

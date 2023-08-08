@@ -27,7 +27,10 @@ class _DestinationPageState extends State<DestinationPage> {
   final busRepo = Get.put(BusRepository());
 
   void _addInputString(String input) {
-    final bool test = [...inputStrings, ...snapshotStrings].contains(input);
+    final bool test = [...inputStrings, ...snapshotStrings]
+            .where((val) => val.toLowerCase() == input.toLowerCase())
+            .length >
+        0;
 
     if (test) {
       Get.snackbar("Info", "Destination Already exit",
@@ -53,7 +56,7 @@ class _DestinationPageState extends State<DestinationPage> {
       _loadDestinationsFuture = _loadDestinationData();
     });
 
-    busRepo.updateBusDataField("destinations", snapshotStrings,"deleted");
+    busRepo.updateBusDataField("destinations", snapshotStrings, "deleted");
   }
 
   void _submitData() {
@@ -69,7 +72,7 @@ class _DestinationPageState extends State<DestinationPage> {
         _loadDestinationsFuture = _loadDestinationData();
       });
 
-      busRepo.updateBusDataField("destinations", snapshotStrings,"added");
+      busRepo.updateBusDataField("destinations", snapshotStrings, "added");
       inputStrings.clear();
     }
   }

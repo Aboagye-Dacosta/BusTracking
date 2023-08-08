@@ -19,7 +19,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final int delays = 10;
+  final int delays = 5;
 
   @override
   void initState() {
