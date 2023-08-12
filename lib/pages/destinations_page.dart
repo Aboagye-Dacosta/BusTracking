@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:project/components/button_component.dart';
 import 'package:project/presentation/sizing.dart';
+import 'package:project/presentation/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../repository/buss_repository.dart';
@@ -33,7 +34,7 @@ class _DestinationPageState extends State<DestinationPage> {
         0;
 
     if (test) {
-      Get.snackbar("Info", "Destination Already exit",
+      Get.snackbar("Info",AppStrings.destinationPage_exist,
           backgroundColor: Colors.yellowAccent,
           snackPosition: SnackPosition.BOTTOM);
     } else {
@@ -63,7 +64,7 @@ class _DestinationPageState extends State<DestinationPage> {
     // Here, you can handle submitting data to a collection
 
     if (inputStrings.isEmpty) {
-      Get.snackbar("Info", "Please add destination",
+      Get.snackbar("Info", AppStrings.destinationPage_add,
           backgroundColor: Colors.yellowAccent,
           snackPosition: SnackPosition.BOTTOM);
     } else {
@@ -98,7 +99,7 @@ class _DestinationPageState extends State<DestinationPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Add Destination",
+              Text(AppStrings.add_destination,
                   style: TextStyle(
                     fontSize: AppSizing.h_24,
                     fontWeight: FontWeight.w700,
@@ -142,7 +143,7 @@ class _DestinationPageState extends State<DestinationPage> {
                 borderRadius: BorderRadius.circular(AppSizing.h_32),
                 child: ButtonComponent(
                   handler: _submitData,
-                  label: 'Submit',
+                  label: 'Save',
                 ),
               ),
               Container(
@@ -180,7 +181,7 @@ class _DestinationPageState extends State<DestinationPage> {
 
                     if (!snapshot.hasData) {
                       return const Center(
-                        child: Text("You have not added any destinations yet"),
+                        child: Text(AppStrings.destinationPage_not_add),
                       );
                     }
                     snapshotStrings =
@@ -209,7 +210,7 @@ class _DestinationPageState extends State<DestinationPage> {
                                   ),
                                   Center(
                                     child: Text(
-                                      "Destinations should be minimun of two and must be differnt",
+                                      AppStrings.destinationPage_minimum,
                                       style:
                                           TextStyle(fontSize: AppSizing.h_16),
                                       textAlign: TextAlign.center,
@@ -225,12 +226,12 @@ class _DestinationPageState extends State<DestinationPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text("You have not add any destinations yet"),
+                                Text(AppStrings.destinationPage_not_add),
                                 SizedBox(
                                   height: AppSizing.h_8,
                                 ),
                                 Text(
-                                  "Let's get you up to speed by add some.",
+                                  AppStrings.destinationPage_add_some,
                                   style: TextStyle(
                                     fontSize: AppSizing.h_16,
                                     color: AppColors.gray,

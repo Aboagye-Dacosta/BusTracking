@@ -540,16 +540,20 @@ class _DriverScreenState extends State<DriverScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text("Destinations should be at lest 2"),
+                                      Text(
+                                        AppStrings.destinationPage_minimum,
+                                        textAlign: TextAlign.center,
+                                      ),
                                       SizedBox(
                                         height: AppSizing.h_8,
                                       ),
                                       Text(
-                                        "Please your destination list.",
+                                        AppStrings.destination_list_add,
                                         style: TextStyle(
                                           fontSize: AppSizing.h_16,
                                           color: AppColors.gray,
                                         ),
+                                        textAlign: TextAlign.center,
                                       ),
                                     ],
                                   ),
@@ -564,7 +568,7 @@ class _DriverScreenState extends State<DriverScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(AppSizing.h_32),
                     child: ButtonComponent(
-                      label: "Add destination",
+                      label: AppStrings.add_destination,
                       handler: () =>
                           handleAddDestinations(driverSnapshot.data!.userId!),
                     ),

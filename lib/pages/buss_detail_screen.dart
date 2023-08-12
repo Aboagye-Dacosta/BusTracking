@@ -70,11 +70,11 @@ class _BussDetailState extends State<BussDetail> {
   void _myCurrentLocation() async {
     _markerbitmapBus = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(AppSizing.h_54, AppSizing.h_54)),
-      "assets/images/bus.png",
+      AppImageUrls.map_bus,
     );
     _markerbitmapStudent = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(AppSizing.h_8, AppSizing.h_8)),
-      "assets/images/man.png",
+      AppImageUrls.map_person,
     );
   }
 
