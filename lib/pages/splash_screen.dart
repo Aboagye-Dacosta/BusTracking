@@ -30,12 +30,12 @@ class _SplashScreenState extends State<SplashScreen> {
         String? userType = pref.getString("userType");
 
         if (email == null && userType == null) {
-          Navigator.of(context).pushNamed(SignInScreen.routeName);
+         Navigator.of(context).pushReplacementNamed(SignInScreen.routeName);
         } else {
           if (userType == "student") {
-            Navigator.of(context).pushNamed(StudentScreen.routeName);
+           Navigator.of(context).pushReplacementNamed(StudentScreen.routeName);
           } else {
-            Navigator.of(context).pushNamed(DriverScreen.routeName);
+           Navigator.of(context).pushReplacementNamed(DriverScreen.routeName);
           }
         }
       } catch (e) {

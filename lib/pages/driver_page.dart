@@ -4,9 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
+import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:project/components/button_component.dart';
+import 'package:project/components/radio_tile.dart';
 import 'package:project/components/spacing_component.dart';
 import 'package:project/model/bus.dart';
 import 'package:project/pages/destinations_page.dart';
@@ -15,18 +16,15 @@ import 'package:project/presentation/colors.dart';
 import 'package:project/presentation/sizing.dart';
 import 'package:project/presentation/strings.dart';
 import 'package:project/presentation/text_theme.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:location/location.dart' as loc;
 
-import '../model/auth/user.dart';
 import '../controller/driver_controller.dart';
+import '../model/auth/user.dart';
 import '../repository/buss_repository.dart';
-import '../provider/location_provider.dart';
 
 String? _radioState = "initial";
-String? _startPoint = "initial";
-String? _destination = "initial";
+String? _startPoint = "start";
+String? _destination = "destination";
 String currentDestination = "";
 String currentStartPoint = "";
 bool active = false;
@@ -69,76 +67,23 @@ class _DriverScreenState extends State<DriverScreen> {
   @override
   void initState() {
     super.initState();
+    _handlePermission();
     driverData = _loadDriverData();
     loadFuture = _loadDestinations();
-    Provider.of<UserLocationProvider>(context, listen: false).initialize();
   }
 
   @override
   Widget build(BuildContext context) {
-    void handleTap(String userId) async {
-      if (_radioState != "initial" &&
-          _destination != "initial" &&
-          _startPoint != "initial" &&
-          isBusAdded) {
-        setState(() {
-          isLoading = true;
-        });
-        if (!active) {
-          final currentLocation = await location.getLocation();
-
-          print("------------------------- value of active ❤️❤️❤️👌😊 $active");
-
-          final busModel = BusModel(
-              driverState: "Online",
-              busState:
-                  _radioState == "full" ? BusState.full : BusState.notFull,
-              currentDestination: _destination!,
-              location: Location(
-                  lat: currentLocation.latitude!,
-                  long: currentLocation.longitude!),
-              driverId: userId,
-              startPoint: _startPoint!);
-
-          await bussRepo.updateBusData(busModel, userId);
-
-          _locationSubscription =
-              location.onLocationChanged.handleError((error) {
-            setState(() {
-              _locationSubscription;
-            });
-          }).listen((loc.LocationData currentLocation) {
-            bussRepo.updateOrCreateBusLocation(
-              userId,
-              Location(
-                  lat: currentLocation.latitude!,
-                  long: currentLocation.longitude!),
-            );
-          });
-        } else {
-          await bussRepo.updateBusDataDriverState("Offline");
-          _locationSubscription!.cancel();
-        }
-        setState(() {
-          isLoading = false;
-          active = !active;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "Bus State, Current Location and Destination should be selected first"),
-        ));
-      }
-    }
-
     void onTapBussState(String? value) {
       setState(() {
+        if (value == null) value = "initial";
         _radioState = value;
       });
     }
 
     void onTapStartPoint(String? value) {
       setState(() {
+        if (value == null) value = "startPoint";
         _startPoint = value;
         currentStartPoint = value!;
       });
@@ -146,6 +91,7 @@ class _DriverScreenState extends State<DriverScreen> {
 
     void onTapDestination(String? value) {
       setState(() {
+        if (value == null) value = "destination";
         _destination = value;
         currentDestination = value!;
       });
@@ -403,14 +349,14 @@ class _DriverScreenState extends State<DriverScreen> {
                             Wrap(
                               alignment: WrapAlignment.center,
                               children: [
-                                _radioTile(
+                                RadioTile(
                                   value: "full",
                                   label: "Buss Full",
                                   groupValue: _radioState,
                                   onTap: () => onTapBussState("full"),
                                   onChanged: onTapBussState,
                                 ),
-                                _radioTile(
+                                RadioTile(
                                   value: "not full",
                                   label: "Bus not full",
                                   groupValue: _radioState,
@@ -529,7 +475,7 @@ class _DriverScreenState extends State<DriverScreen> {
                                   children: destinationSnapshot.hasData
                                       ? [
                                           ...destinationSnapshot.data!
-                                              .map((val) => _radioTile(
+                                              .map((val) => RadioTile(
                                                     value: val,
                                                     label: val,
                                                     groupValue: _startPoint,
@@ -568,7 +514,7 @@ class _DriverScreenState extends State<DriverScreen> {
                                   children: destinationSnapshot.hasData
                                       ? [
                                           ...destinationSnapshot.data!
-                                              .map((val) => _radioTile(
+                                              .map((val) => RadioTile(
                                                     value: val,
                                                     label: val,
                                                     groupValue: _destination,
@@ -628,57 +574,57 @@ class _DriverScreenState extends State<DriverScreen> {
         });
   }
 
-  _radioTile({
-    String value = "",
-    String label = "",
-    String? groupValue,
-    void Function()? onTap,
-    void Function(String?)? onChanged,
-    bool? disabled = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: FittedBox(
-        child: Container(
-          // width: AppSizing.h_120,
-          padding: disabled == false
-              ? const EdgeInsets.symmetric(horizontal: AppSizing.h_8)
-              : const EdgeInsets.symmetric(
-                  horizontal: AppSizing.h_16, vertical: 10),
-          margin: const EdgeInsets.all(AppSizing.s_2),
+  void handleTap(String userId) async {
+    if (_radioState != "initial" &&
+        _destination != "destination" &&
+        _startPoint != "startPoint" &&
+        isBusAdded) {
+      setState(() {
+        isLoading = true;
+      });
+      if (!active) {
+        final currentLocation = await location.getLocation();
 
-          decoration: BoxDecoration(
-              color: groupValue == value && disabled == false
-                  ? AppColors.primary
-                  : disabled == true
-                      ? AppColors.gray
-                      : AppColors.light,
-              border: Border.all(
-                  width: 1.0,
-                  color: groupValue == value ? AppColors.primary : Colors.grey),
-              borderRadius: BorderRadius.circular(AppSizing.h_54)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (disabled == false)
-                Radio(
-                  value: value,
-                  groupValue: groupValue,
-                  onChanged: onChanged,
-                  toggleable: true,
-                ),
-              Text(
-                label,
-                style: TextStyle(
-                    color:
-                        groupValue == value ? AppColors.light : AppColors.dark),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+        print("------------------------- value of active ❤️❤️❤️👌😊 $active");
+
+        final busModel = BusModel(
+            driverState: "Online",
+            busState: _radioState == "full" ? BusState.full : BusState.notFull,
+            currentDestination: _destination!,
+            location: Location(
+                lat: currentLocation.latitude!,
+                long: currentLocation.longitude!),
+            driverId: userId,
+            startPoint: _startPoint!);
+
+        await bussRepo.updateBusData(busModel, userId);
+
+        _locationSubscription = location.onLocationChanged.handleError((error) {
+          setState(() {
+            _locationSubscription;
+          });
+        }).listen((loc.LocationData currentLocation) {
+          bussRepo.updateOrCreateBusLocation(
+            userId,
+            Location(
+                lat: currentLocation.latitude!,
+                long: currentLocation.longitude!),
+          );
+        });
+      } else {
+        await bussRepo.updateBusDataDriverState("Offline");
+        _locationSubscription!.cancel();
+      }
+      setState(() {
+        isLoading = false;
+        active = !active;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            "Bus State, Current Location and Destination should be selected first"),
+      ));
+    }
   }
 
   void _showAlertDialog(
@@ -744,6 +690,61 @@ class _DriverScreenState extends State<DriverScreen> {
       _handlePermission();
     } else if (status.isPermanentlyDenied) {
       openAppSettings();
+    }
+
+    void handleTap(String userId) async {
+      if (_radioState != "initial" &&
+          _destination != "initial" &&
+          _startPoint != "initial" &&
+          isBusAdded) {
+        setState(() {
+          isLoading = true;
+        });
+        if (!active) {
+          final currentLocation = await location.getLocation();
+
+          print("------------------------- value of active ❤️❤️❤️👌😊 $active");
+
+          final busModel = BusModel(
+              driverState: "Online",
+              busState:
+                  _radioState == "full" ? BusState.full : BusState.notFull,
+              currentDestination: _destination!,
+              location: Location(
+                  lat: currentLocation.latitude!,
+                  long: currentLocation.longitude!),
+              driverId: userId,
+              startPoint: _startPoint!);
+
+          await bussRepo.updateBusData(busModel, userId);
+
+          _locationSubscription =
+              location.onLocationChanged.handleError((error) {
+            setState(() {
+              _locationSubscription;
+            });
+          }).listen((loc.LocationData currentLocation) {
+            bussRepo.updateOrCreateBusLocation(
+              userId,
+              Location(
+                  lat: currentLocation.latitude!,
+                  long: currentLocation.longitude!),
+            );
+          });
+        } else {
+          await bussRepo.updateBusDataDriverState("Offline");
+          _locationSubscription!.cancel();
+        }
+        setState(() {
+          isLoading = false;
+          active = !active;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "Bus State, Current Location and Destination should be selected first"),
+        ));
+      }
     }
   }
 }

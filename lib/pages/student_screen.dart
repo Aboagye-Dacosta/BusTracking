@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:project/components/app_logo.dart';
 import 'package:project/components/bus_item_component.dart';
 import 'package:project/components/spacing_component.dart';
 import 'package:project/model/bus_driver.dart';
