@@ -1,16 +1,29 @@
-# project
+# BusTracking - Simple Mobile application for tracking school bus
 
-A new Flutter project.
+This application was developed to help students find it easy to locate and wait for school buses.
 
-## Getting Started
+## Packages leveraged
+- get
+- flutter_svg
+- provider
+- dropdown_textfield
+- google_maps_flutter
+- location
+- cloud_firestore
+- firebase_core
+- firebase_auth
+- permission_handler
+- shared_preferences
+- flutter_polyline_points
+- flutter_config
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Sample UI images
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+![Alt text](ui_images/ui-11.jpg)
+![Alt text](ui_images/ui-12.jpg)
+![Alt text](ui_images/ui-9.jpg)
+![Alt text](ui_images/ui-10.jpg)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### For a full list of list of images visit the [application](ui_images)[ ui images](ui_images)
+
