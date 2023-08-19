@@ -108,9 +108,7 @@ class BusRepository extends GetxController {
   }
 
   Future<List<BusModel>> readAllBussData() async {
-    // List<BusAndDriver> data = await BusDriverRepository().loadBusAndDriver();
 
-    // print("-------------------- 👌❤️❤️❤️❤️😁🙌 $data");
 
     final res = await _db.collection(_collection).get();
 

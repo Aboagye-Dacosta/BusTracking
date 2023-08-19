@@ -314,33 +314,7 @@ class _StudentScreenState extends State<StudentScreen> {
                         ],
                       ),
                     ),
-                    // Container(
-                    //   height: AppSizing.h_250,
-                    //   decoration: BoxDecoration(color: AppColors.primary),
-                    //   child: const Column(
-                    //     children: [
-                    //       Row(
-                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //         children: [Text("Dacosta"), Text("#Student")],
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    // Container(
-                    //   height: 1000,
-                    //   decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.only(
-                    //           topLeft: Radius.circular(AppSizing.h_8),
-                    //           topRight: Radius.circular(AppSizing.h_8))),
-                    //   padding: EdgeInsets.all(AppPadding.p_8),
-                    //   child: ListView.builder(
-                    //     padding: EdgeInsets.zero,
-                    //     itemBuilder: (BuildContext context, i) {
-                    //       return const BussItem();
-                    //     },
-                    //     itemCount: 100,
-                    //   ),
-                    // )
+                   
                   ]))
                 ],
               );

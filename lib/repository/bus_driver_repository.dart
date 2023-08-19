@@ -30,16 +30,16 @@ class BusDriverRepository {
           driverState: data["driverState"] ?? 'Offline');
     }).toList();
 
-    print("-----------------got here❤️❤️❤️❤️❤️👌😂😂 #1");
+    
 
     final userRes = await _instance.collection(_driverCollection).get();
 
-    print("-----------------got here❤️❤️❤️❤️❤️👌😂😂 #2");
+    
 
     List<UserModel> users =
         userRes.docs.where((e) => e.data()["user_type"] == "driver").map((e) {
       final data = e.data();
-      print("-----------------got here❤️❤️❤️❤️❤️👌😂😂 #3");
+      
 
       return UserModel(
           userId: e.id,

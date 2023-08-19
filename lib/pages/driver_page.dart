@@ -589,7 +589,7 @@ class _DriverScreenState extends State<DriverScreen> {
       if (!active) {
         final currentLocation = await location.getLocation();
 
-        print("------------------------- value of active ❤️❤️❤️👌😊 $active");
+        
 
         final busModel = BusModel(
             driverState: "Online",
@@ -707,7 +707,7 @@ class _DriverScreenState extends State<DriverScreen> {
         if (!active) {
           final currentLocation = await location.getLocation();
 
-          print("------------------------- value of active ❤️❤️❤️👌😊 $active");
+          
 
           final busModel = BusModel(
               driverState: "Online",
