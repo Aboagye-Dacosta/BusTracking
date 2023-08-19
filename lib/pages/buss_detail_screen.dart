@@ -17,12 +17,6 @@ import 'package:location/location.dart' as loc;
 import 'package:project/provider/location_provider.dart';
 import 'package:provider/provider.dart';
 
-//car id
-//driver id
-//to
-//from
-//state
-
 class BussDetail extends StatefulWidget {
   const BussDetail({super.key});
 
