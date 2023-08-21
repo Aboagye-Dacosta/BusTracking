@@ -25,5 +25,5 @@ This application was developed to help students find it easy to locate and wait 
 ![Alt text](ui_images/ui-9.jpg)
 ![Alt text](ui_images/ui-10.jpg)
 
-### For a full list of list of images visit the [application](ui_images)[ ui images](ui_images)
+### For a full list of list of images visit the [ ui images](ui_images)
 
